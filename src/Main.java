@@ -17,14 +17,10 @@ public class Main {
 		System.out.println("Length of the signal (in sample) : "+ signal.getSignalLength());
 		System.out.println("Sampling frequency : " + signal.getSamplingFrequency());
 		System.out.println("Length of the signal (in ms) : "+ signal.getSignalLength() * 1000 / signal.getSamplingFrequency());
-		/*
-		signal.setSignal(args[0]);
-		signal.debruitage(1, 4, 0);
-		signal.exportSignal("output/temoinA1B4G0.wav", true);
-		*/
+
 		for(int alpha = 0 ; alpha < 5 ; alpha++){
 			for(int beta = 0 ; beta < 5 ; beta++){
-				for(int gamma = 0 ; gamma < 3 ; gamma++){
+				for(double gamma = 0.25 ; gamma < 1 ; gamma+=0.25){
 					signal.setSignal(args[0]);
 					signal.debruitage(alpha, beta, gamma);
 					signal.exportSignal("output/A"+alpha+"B"+beta+"G"+gamma+".wav", true);

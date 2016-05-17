@@ -90,10 +90,6 @@ public class SoundSignal {
 	 */
 	public void setSignal(short [] newsignal, int samplingFrequency ){
 
-		/*signal = new short[newsignal.length];
-	for(int i=0;i<newsignal.length;i++)
-	    signal[i]=newsignal[i];
-		 */
 		signal = newsignal;
 		this.samplingFrequency = samplingFrequency;
 	}
@@ -200,7 +196,7 @@ public class SoundSignal {
 	final int fftOrder = 1024;
 
 
-	void debruitage(int alpha, int beta, int gamma){
+	void debruitage(double alpha, double beta, double gamma){
 		
 		
 		int window_offset = (int) (0.008 * samplingFrequency);
@@ -211,7 +207,7 @@ public class SoundSignal {
 		double sommeMoyenne = 0.;
 		double denomMoyen = 0.;
 		double bruitMoyen = 0.;
-		final int nbSpectresMoyen = 5;
+		final int nbSpectresMoyen = 6;
 		
 		for(int i = 0 ; i < signal.length - window_size ; i += window_offset){
 			double[] hamming = hamming(i, window_size);
@@ -231,12 +227,13 @@ public class SoundSignal {
 				x[( j)*2+1] = 0;
 			}
 			
-			//Réalisation de la transformée de Fourrier
+
 			fft.transform(x, false);
+
 			double[] ampl = spectreAmplitude(x);
 			double[] phase = spectre_phase(x);
 			
-			//Mise � jour du bruit moyen
+			//Mise à jour du bruit moyen
 			if(i/window_offset < nbSpectresMoyen){
 				for(int j = 0 ; j < ampl.length ; j++){
 					sommeMoyenne += ampl[j];
@@ -247,6 +244,7 @@ public class SoundSignal {
 		
 			//On effectue la soustraction spectrale
 			for(int j = 0 ; j < fftOrder ; j++){
+				
 				double diff =  			 Math.pow(ampl[j], alpha)
 								- beta * Math.pow(bruitMoyen, alpha);
 				if(diff > 0){
@@ -255,14 +253,12 @@ public class SoundSignal {
 				else{
 					ampl[j] = gamma * bruitMoyen;
 				}
+				
 			}
-			
-			
 			
 			x = spectrereconstruction(ampl, phase);
 			
-			//Réalisation de la transformée de Fourrier Inverse
-			fft.transform(x,true); //le signal fenêtré final se trouve en x[i*2]
+			fft.transform(x,true); 
 			
 			for(int j = 0 ; j < fftOrder ; j++){
 				if(j < window_size){
@@ -270,10 +266,7 @@ public class SoundSignal {
 				}
 			}
 		}
-
-
 		
-
 		reconstructSig();
 	}
 	
